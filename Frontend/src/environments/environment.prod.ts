@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  // No trailing slash. Replace with your Railway public URL, then redeploy Vercel.
-  apiUrl: 'https://car-maintenance-tracker-production.up.railway.app',
+  // Automatically replaced during build if API_URL or BACKEND_URL is set in Vercel
+  apiUrl: 'http://13.60.194.115',
 };
