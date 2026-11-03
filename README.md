@@ -641,6 +641,4 @@ These TypeScript interfaces mirror the backend schema:
 - [ ] Export records as CSV/PDF
 - [x] Docker support
 - [ ] Cloud storage for photos (S3 / Cloudinary)
-- [x] Environment-based API URL configuration
-
-
+- [x] Environment-based Backend API URL configuration for deployed frontend
