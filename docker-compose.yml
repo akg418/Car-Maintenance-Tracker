@@ -15,7 +15,7 @@ services:
       # Must live inside the sqlite_data volume (/app/data) to persist.
       DB_PATH: /app/data/data.sqlite
       UPLOAD_DIR: /app/uploads
-      FRONTEND_URL: http://localhost:4200
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:4200}
       # Swagger stays reachable at http://localhost:3000/api in Compose.
       SWAGGER_ENABLED: "true"
       # Required. Set it in a .env file next to this one (never commit it):
@@ -25,6 +25,14 @@ services:
     volumes:
       - sqlite_data:/app/data
       - uploads_data:/app/uploads
+
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflare-tunnel
+    restart: unless-stopped
+    command: tunnel --no-autoupdate --url http://backend:3000
+    depends_on:
+      - backend
 
   frontend:
     build:
