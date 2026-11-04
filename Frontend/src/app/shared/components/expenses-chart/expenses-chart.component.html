@@ -31,209 +31,214 @@
         </select>
       </div>
 
-      <!-- Time Period Pills -->
-      <div class="flex items-center bg-gray-100 dark:bg-gray-700/70 p-1 rounded-xl gap-0.5 overflow-x-auto max-w-full">
-        <button
-          type="button"
-          (click)="onPeriodChange('lifetime')"
-          [ngClass]="selectedPeriod === 'lifetime' ? 'bg-white dark:bg-gray-800 text-purple-700 dark:text-purple-300 shadow-xs font-semibold' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 font-medium'"
-          class="px-2.5 py-1 text-2xs sm:text-xs rounded-lg transition-colors whitespace-nowrap"
-        >
-          Lifetime
-        </button>
-        <button
-          type="button"
-          (click)="onPeriodChange('day')"
-          [ngClass]="selectedPeriod === 'day' ? 'bg-white dark:bg-gray-800 text-purple-700 dark:text-purple-300 shadow-xs font-semibold' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 font-medium'"
-          class="px-2.5 py-1 text-2xs sm:text-xs rounded-lg transition-colors whitespace-nowrap"
-        >
-          Last 24H
-        </button>
-        <button
-          type="button"
-          (click)="onPeriodChange('week')"
-          [ngClass]="selectedPeriod === 'week' ? 'bg-white dark:bg-gray-800 text-purple-700 dark:text-purple-300 shadow-xs font-semibold' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 font-medium'"
-          class="px-2.5 py-1 text-2xs sm:text-xs rounded-lg transition-colors whitespace-nowrap"
-        >
-          Last Week
-        </button>
-        <button
-          type="button"
-          (click)="onPeriodChange('month')"
-          [ngClass]="selectedPeriod === 'month' ? 'bg-white dark:bg-gray-800 text-purple-700 dark:text-purple-300 shadow-xs font-semibold' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 font-medium'"
-          class="px-2.5 py-1 text-2xs sm:text-xs rounded-lg transition-colors whitespace-nowrap"
-        >
-          Last Month
-        </button>
-        <button
-          type="button"
-          (click)="onPeriodChange('year')"
-          [ngClass]="selectedPeriod === 'year' ? 'bg-white dark:bg-gray-800 text-purple-700 dark:text-purple-300 shadow-xs font-semibold' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 font-medium'"
-          class="px-2.5 py-1 text-2xs sm:text-xs rounded-lg transition-colors whitespace-nowrap"
-        >
-          Last Year
-        </button>
+      <!-- Time Period Pills: one gliding highlight behind the buttons -->
+      <div #pillTrack class="relative flex items-center bg-gray-100 dark:bg-gray-700/70 p-1 rounded-xl gap-0.5 overflow-x-auto max-w-full">
+        <span
+          aria-hidden="true"
+          class="pill-glide absolute left-0 top-1 bottom-1 rounded-lg bg-white dark:bg-gray-800 shadow-sm ring-1 ring-purple-500/10"
+          [style.width.px]="pill.width"
+          [style.transform]="'translateX(' + pill.left + 'px)'"
+          [style.opacity]="pill.ready ? 1 : 0"
+        ></span>
+        @for (p of periods; track p.key) {
+          <button
+            #pill
+            type="button"
+            (click)="onPeriodChange(p.key)"
+            [attr.aria-pressed]="selectedPeriod === p.key"
+            [ngClass]="selectedPeriod === p.key ? 'text-purple-700 dark:text-purple-300 font-semibold' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 font-medium'"
+            class="relative z-10 px-2.5 py-1 text-2xs sm:text-xs rounded-lg transition-colors duration-300 whitespace-nowrap"
+          >
+            {{ p.label }}
+          </button>
+        }
       </div>
     </div>
   </div>
 
   <!-- Summary Metrics Row -->
   <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 my-4">
-    <div class="p-3 bg-purple-50/60 dark:bg-purple-950/30 rounded-xl border border-purple-100 dark:border-purple-900/40">
+    <div class="p-3 bg-purple-50/60 dark:bg-purple-900/30 rounded-xl border border-purple-100 dark:border-purple-900/40">
       <div class="text-3xs  text-purple-800 dark:text-purple-400 tracking-wider">Total Expenses</div>
       <div class="text-base sm:text-xl font-extrabold text-purple-700 dark:text-purple-300 mt-0.5">
-        {{ totalExpense | number:'1.2-2' }} £
+        {{ display.total | number:'1.2-2' }} £
       </div>
     </div>
 
     <div class="p-3 bg-gray-50/80 dark:bg-gray-700/40 rounded-xl border border-gray-100 dark:border-gray-700">
       <div class="text-3xs  text-gray-500 dark:text-gray-400 tracking-wider">Avg. Event Cost</div>
       <div class="text-base sm:text-xl font-bold text-gray-800 dark:text-gray-200 mt-0.5">
-        {{ averageExpense | number:'1.2-2' }} £
+        {{ display.avg | number:'1.2-2' }} £
       </div>
     </div>
 
     <div class="col-span-2 sm:col-span-1 p-3 bg-gray-50/80 dark:bg-gray-700/40 rounded-xl border border-gray-100 dark:border-gray-700">
       <div class="text-3xs  text-gray-500 dark:text-gray-400 tracking-wider">Highest Expense</div>
       <div class="text-base sm:text-xl font-bold text-gray-800 dark:text-gray-200 mt-0.5">
-        {{ highestExpense | number:'1.2-2' }} £
+        {{ display.high | number:'1.2-2' }} £
       </div>
     </div>
   </div>
 
-  <!-- SVG Chart Container -->
-  <div class="relative w-full aspect-[800/180] min-h-[210px] mt-2">
-    <!-- Active Tooltip Floating Popover -->
-    <div
-      *ngIf="activePoint"
-      class="absolute z-30 pointer-events-none px-3.5 py-2 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 rounded-xl shadow-2xl border border-gray-800 dark:border-gray-200 text-2xs font-semibold whitespace-nowrap transition-all duration-100 animate-in fade-in zoom-in-95"
-      [style.left.%]="(activePoint.x / svgWidth) * 100"
-      [style.top.%]="(activePoint.y / svgHeight) * 100"
-      [style.transform]="getTooltipTransform(activePoint)"
-    >
-      <div class=" text-xs text-purple-300 dark:text-purple-700">{{ activePoint.label }}</div>
-      <div class="text-sm  mt-0.5">{{ activePoint.cost | number:'1.2-2' }} £</div>
-      <div class="text-xs text-gray-300 dark:text-gray-600 mt-0.5" *ngIf="activePoint.count > 0">
-        {{ activePoint.count }} service {{ activePoint.count === 1 ? 'event' : 'events' }}
+
+  <!-- Chart. The SVG is drawn at the container's real pixel size, so the
+       tooltip (HTML) and the points (SVG) share one coordinate space. -->
+  <div
+    #plot
+    tabindex="0"
+    role="img"
+    aria-label="Expenses timeline. Use arrow keys to inspect each period."
+    (keydown)="onKeydown($event)"
+    (blur)="setActive(null)"
+    class="relative w-full h-[230px] sm:h-[250px] mt-2 select-none touch-pan-y outline-none rounded-xl focus-visible:ring-2 focus-visible:ring-purple-400/60"
+  >
+    <!-- Tooltip: positioned per frame from a spring, see layoutTooltip() -->
+    <div #tooltip class="absolute left-0 top-0 z-30 pointer-events-none will-change-transform" [attr.aria-hidden]="activeIndex === null">
+      <div
+        #tipCard
+        class="tip-card relative min-w-[118px] px-3.5 py-2.5 rounded-xl bg-gray-900/90 dark:bg-gray-100/95 text-white dark:text-gray-900 shadow-2xl shadow-purple-900/20 ring-1 ring-white/10 dark:ring-black/5 backdrop-blur-md whitespace-nowrap"
+        [class.tip-visible]="activeIndex !== null"
+      >
+        @if (tipPoint; as tp) {
+          <div class="flex items-baseline gap-1.5 text-xs font-semibold text-purple-300 dark:text-purple-700">
+            {{ tp.label }}
+            @if (tp.subLabel) {
+              <span class="text-3xs font-medium opacity-70">{{ tp.subLabel }}</span>
+            }
+          </div>
+          <div class="text-base font-bold tabular-nums mt-0.5">{{ tp.cost | number:'1.2-2' }} £</div>
+          <div class="flex items-center gap-2 mt-1 text-3xs font-medium">
+            @if (tp.count > 0) {
+              <span class="text-gray-300 dark:text-gray-600">{{ tp.count }} {{ tp.count === 1 ? 'event' : 'events' }}</span>
+            }
+            @if (tipDelta; as d) {
+              <span
+                class="px-1.5 py-0.5 rounded-md font-semibold"
+                [ngClass]="d.up ? 'bg-rose-500/15 text-rose-300 dark:text-rose-600' : 'bg-emerald-500/15 text-emerald-300 dark:text-emerald-600'"
+              >
+                @if (d.isNew) { new } @else { {{ d.up ? '▲' : '▼' }} {{ d.pct | number:'1.0-0' }}% }
+              </span>
+            }
+          </div>
+        }
+        <div #tipArrow class="absolute w-2.5 h-2.5 rotate-45 bg-gray-900/90 dark:bg-gray-100/95"></div>
       </div>
-      <!-- Pointer arrow pointing down (when tooltip is above node) -->
-      <div
-        *ngIf="!isTooltipBelow(activePoint)"
-        class="absolute bottom-0 -translate-x-1/2 translate-y-full w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-gray-900 dark:border-t-gray-100"
-        [style.left]="getArrowLeftPercent(activePoint)"
-      ></div>
-      <!-- Pointer arrow pointing up (when tooltip is under node) -->
-      <div
-        *ngIf="isTooltipBelow(activePoint)"
-        class="absolute top-0 -translate-x-1/2 -translate-y-full w-0 h-0 border-x-4 border-x-transparent border-b-4 border-b-gray-900 dark:border-b-gray-100"
-        [style.left]="getArrowLeftPercent(activePoint)"
-      ></div>
     </div>
 
-    <!-- Chart Canvas / SVG -->
-    <ng-container *ngIf="chartPoints.length > 0; else noChartData">
-      <!-- currentColor = brand colour for the line, area and points. -->
+    @if (chartPoints.length > 0) {
       <svg
-        [attr.viewBox]="'0 0 ' + svgWidth + ' ' + svgHeight"
-        class="w-full h-full overflow-visible text-purple-600 dark:text-purple-400"
+        [attr.width]="width"
+        [attr.height]="height"
+        [attr.viewBox]="'0 0 ' + width + ' ' + height"
+        class="absolute inset-0 overflow-visible text-purple-600 dark:text-purple-400"
       >
         <defs>
-          <linearGradient id="purpleGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="currentColor" stop-opacity="0.35" />
-            <stop offset="100%" stop-color="currentColor" stop-opacity="0.0" />
+          <linearGradient [attr.id]="uid + '-area'" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="currentColor" stop-opacity="0.38" />
+            <stop offset="65%" stop-color="currentColor" stop-opacity="0.08" />
+            <stop offset="100%" stop-color="currentColor" stop-opacity="0" />
           </linearGradient>
+          <linearGradient [attr.id]="uid + '-xhair'" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="currentColor" stop-opacity="0" />
+            <stop offset="35%" stop-color="currentColor" stop-opacity="0.7" />
+            <stop offset="100%" stop-color="currentColor" stop-opacity="0.15" />
+          </linearGradient>
+          <radialGradient [attr.id]="uid + '-spot'">
+            <stop offset="0%" stop-color="currentColor" stop-opacity="0.22" />
+            <stop offset="100%" stop-color="currentColor" stop-opacity="0" />
+          </radialGradient>
+          <filter [attr.id]="uid + '-glow'" x="-10%" y="-50%" width="120%" height="200%">
+            <feGaussianBlur stdDeviation="5" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
         </defs>
 
-        <!-- Horizontal Grid lines -->
-        <line [attr.x1]="paddingX" [attr.y1]="paddingTop" [attr.x2]="svgWidth - paddingX" [attr.y2]="paddingTop" stroke="currentColor" class="text-gray-200 dark:text-gray-700/60" stroke-dasharray="4 4" stroke-width="1" />
-        <line [attr.x1]="paddingX" [attr.y1]="(paddingTop + (svgHeight - paddingBottom)) / 2" [attr.x2]="svgWidth - paddingX" [attr.y2]="(paddingTop + (svgHeight - paddingBottom)) / 2" stroke="currentColor" class="text-gray-200 dark:text-gray-700/60" stroke-dasharray="4 4" stroke-width="1" />
-        <line [attr.x1]="paddingX" [attr.y1]="svgHeight - paddingBottom" [attr.x2]="svgWidth - paddingX" [attr.y2]="svgHeight - paddingBottom" stroke="currentColor" class="text-gray-200 dark:text-gray-700/60" stroke-width="1" />
+        <!-- Grid -->
+        <g class="text-gray-200 dark:text-gray-700/60" stroke="currentColor" stroke-width="1">
+          <line [attr.x1]="padLeft" [attr.y1]="padTop" [attr.x2]="width - padRight" [attr.y2]="padTop" stroke-dasharray="4 4" />
+          <line [attr.x1]="padLeft" [attr.y1]="midY" [attr.x2]="width - padRight" [attr.y2]="midY" stroke-dasharray="4 4" />
+          <line [attr.x1]="padLeft" [attr.y1]="bottomY" [attr.x2]="width - padRight" [attr.y2]="bottomY" />
+        </g>
+        <g class="text-[10px] fill-gray-400 dark:fill-gray-500 font-semibold tabular-nums" text-anchor="end">
+          <text [attr.x]="padLeft - 8" [attr.y]="padTop + 4">{{ display.max | number:'1.0-0' }}£</text>
+          <text [attr.x]="padLeft - 8" [attr.y]="midY + 4">{{ display.max / 2 | number:'1.0-0' }}£</text>
+          <text [attr.x]="padLeft - 8" [attr.y]="bottomY + 4">0£</text>
+        </g>
 
-        <!-- Y-Axis Max Label -->
-        <text [attr.x]="paddingX - 8" [attr.y]="paddingTop + 4" text-anchor="end" class="text-[10px] fill-gray-400 dark:fill-gray-500 font-semibold select-none">
-          {{ maxCost | number:'1.0-0' }}£
-        </text>
-        <text [attr.x]="paddingX - 8" [attr.y]="svgHeight - paddingBottom + 4" text-anchor="end" class="text-[10px] fill-gray-400 dark:fill-gray-500 font-semibold select-none">
-          0£
-        </text>
-
-        <!-- Area Fill -->
-        <path *ngIf="areaD" [attr.d]="areaD" fill="url(#purpleGradient)" pointer-events="none" />
-
-        <!-- Smooth Curve Line -->
-        <path
-          *ngIf="pathD"
-          [attr.d]="pathD"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          pointer-events="none"
-          class="transition-all duration-300"
-        />
-
-        <!-- Data Point Nodes & X-Axis Labels -->
-        <g *ngFor="let pt of chartPoints">
-          <!-- X-Axis Labels -->
-          <text
-            [attr.x]="pt.x"
-            [attr.y]="svgHeight - 10"
-            text-anchor="middle"
-            class="text-[10px]  fill-gray-500 dark:fill-gray-400 select-none transition-colors duration-150"
-            [class.fill-purple-600]="activePoint === pt"
-            [class.dark:fill-purple-300]="activePoint === pt"
-            [class.font-bold]="activePoint === pt"
-          >
-            {{ pt.label }}
-          </text>
-
-          <!-- Outer glowing ring when active -->
-          <circle
-            *ngIf="activePoint === pt"
-            [attr.cx]="pt.x"
-            [attr.cy]="pt.y"
-            r="9"
-            fill="currentColor"
-            fill-opacity="0.35"
-            pointer-events="none"
-            class="animate-pulse"
-          />
-
-          <!-- Visible point circle -->
-          <circle
-            [attr.cx]="pt.x"
-            [attr.cy]="pt.y"
-            [attr.r]="activePoint === pt ? 5 : 3.5"
-            fill="currentColor"
-            stroke-width="1.5"
-            pointer-events="none"
-            class="stroke-white dark:stroke-gray-800 transition-all duration-150"
-          />
-
-          <!-- Large Invisible Mouse Hit Target for Smooth Hover -->
-          <circle
-            [attr.cx]="pt.x"
-            [attr.cy]="pt.y"
-            r="16"
-            fill="transparent"
-            class="cursor-pointer"
-            (mouseenter)="setActivePoint(pt)"
-            (mouseleave)="setActivePoint(null)"
+        <!-- Spotlight + crosshair that glide with the spring cursor -->
+        <g class="crosshair" [style.opacity]="activeIndex !== null ? 1 : 0" pointer-events="none">
+          <ellipse [attr.cx]="cursorX" [attr.cy]="cursorY" rx="70" [attr.ry]="height * 0.6" [attr.fill]="'url(#' + uid + '-spot)'" />
+          <line
+            [attr.x1]="cursorX" [attr.x2]="cursorX"
+            [attr.y1]="padTop - 10" [attr.y2]="bottomY"
+            [attr.stroke]="'url(#' + uid + '-xhair)'"
+            stroke-width="1.5" stroke-dasharray="3 4"
           />
         </g>
-      </svg>
-    </ng-container>
 
-    <!-- Empty State when no costs found -->
-    <ng-template #noChartData>
-  
+        <!-- Series. Re-created on drawKey so the entrance animations replay. -->
+        @for (k of [drawKey]; track k) {
+          <g pointer-events="none">
+            <clipPath [attr.id]="uid + '-clip-' + k">
+              <rect class="area-reveal" x="0" y="0" [attr.width]="width" [attr.height]="height" />
+            </clipPath>
+            <path [attr.d]="areaPath" [attr.fill]="'url(#' + uid + '-area)'" [attr.clip-path]="'url(#' + uid + '-clip-' + k + ')'" />
+            <path
+              class="line-draw"
+              pathLength="1"
+              [attr.d]="linePath"
+              fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round"
+              [attr.filter]="'url(#' + uid + '-glow)'"
+            />
+            <path
+              class="shimmer text-white dark:text-purple-100"
+              pathLength="1"
+              [attr.d]="linePath"
+              fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+            />
+
+            @for (pt of chartPoints; track $index; let i = $index) {
+              <text
+                [attr.x]="pt.x"
+                [attr.y]="height - 10"
+                text-anchor="middle"
+                class="text-[10px] transition-colors duration-200"
+                [ngClass]="activeIndex === i ? 'fill-purple-600 dark:fill-purple-300 font-bold' : 'fill-gray-500 dark:fill-gray-400'"
+              >
+                {{ pt.label }}
+              </text>
+
+              @if (activeIndex === i) {
+                <circle class="ripple" [attr.cx]="pt.x" [attr.cy]="pt.y" r="5" fill="none" stroke="currentColor" stroke-width="1.5" />
+                <circle class="ripple ripple-late" [attr.cx]="pt.x" [attr.cy]="pt.y" r="5" fill="none" stroke="currentColor" stroke-width="1.5" />
+              }
+
+              <g class="pt-pop" [style.animation-delay.ms]="chartPoints.length > 1 ? 150 + (i / (chartPoints.length - 1)) * 900 : 300">
+                <circle
+                  class="pt stroke-white dark:stroke-gray-800"
+                  [class.pt-active]="activeIndex === i"
+                  [class.pt-dim]="activeIndex !== null && activeIndex !== i"
+                  [attr.cx]="pt.x" [attr.cy]="pt.y" r="3.5"
+                  fill="currentColor" stroke-width="1.5"
+                />
+              </g>
+            }
+          </g>
+        }
+      </svg>
+    } @else if (!loading) {
+      <div class="absolute inset-0 flex items-center justify-center">
         <app-empty-state title="No expense records logged for this period" message="Try selecting another time period or vehicle.">
           <svg icon class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
           </svg>
         </app-empty-state>
-    </ng-template>
+      </div>
+    }
   </div>
 </div>

@@ -82,7 +82,7 @@ import { WheelSpinnerComponent } from '../wheel-spinner/wheel-spinner.component'
           </div>
 
           <!-- Current Recorded Odometer -->
-          <div class="p-3 rounded-xl bg-purple-50/60 dark:bg-purple-950/30 border border-purple-100 dark:border-purple-900/40 flex items-center justify-between text-xs">
+          <div class="p-3 rounded-xl bg-purple-50/60 dark:bg-purple-900/30 border border-purple-100 dark:border-purple-900/40 flex items-center justify-between text-xs">
             <span class="text-purple-700 dark:text-purple-300 font-medium">Recorded Odometer</span>
             <span class="font-bold text-purple-900 dark:text-purple-200">{{ currentKm | number }} KM</span>
           </div>

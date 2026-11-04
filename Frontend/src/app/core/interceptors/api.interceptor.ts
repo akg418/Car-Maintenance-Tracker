@@ -2,7 +2,8 @@ import { HttpInterceptorFn } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 
 export const apiInterceptor: HttpInterceptorFn = (req, next) => {
-  if (req.url.startsWith('http')) {
+  // Absolute URLs, or ones already prefixed (e.g. photo URLs built from apiUrl), pass through.
+  if (req.url.startsWith('http') || (environment.apiUrl && req.url.startsWith(environment.apiUrl))) {
     return next(req);
   }
 

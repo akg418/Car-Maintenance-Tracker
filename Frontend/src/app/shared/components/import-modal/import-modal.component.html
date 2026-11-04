@@ -57,7 +57,7 @@
         </label>
 
         <div (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)" (drop)="onDrop($event)"
-          [ngClass]="dragOver ? 'border-purple-500 bg-purple-50/60 dark:bg-purple-950/30' : 'border-gray-300 dark:border-gray-600 bg-gray-50/60 dark:bg-gray-750'"
+          [ngClass]="dragOver ? 'border-purple-500 bg-purple-50/60 dark:bg-purple-900/30' : 'border-gray-300 dark:border-gray-600 bg-gray-50/60 dark:bg-gray-750'"
           class="relative border-2 border-dashed rounded-xl p-4 sm:p-5 flex flex-col items-center justify-center text-center transition-all cursor-pointer hover:border-purple-400 dark:hover:border-purple-500 group"
           (click)="fileInput.click()">
           <input #fileInput type="file" accept=".json,application/json" (change)="onFileSelected($event)" class="hidden"
